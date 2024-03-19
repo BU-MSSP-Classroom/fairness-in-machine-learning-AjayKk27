@@ -331,16 +331,18 @@ Please write your answer in full sentences.
 Discuss what a favorable label in this problem is and what does a favorable label grant the affected user?
 Is it assertive or non-punitive?
 
+
 ~~~
-Please write your answer in full sentences.
+The favorable label is getting a recidivism risk of 'low' or violent recidivism risk of 'low'. A favorable label might grand the user a better chance at parole. Non punitive but also assertive. 
 
 
 ~~~
 
 What type of justice is this issue about?
 
+
 ~~~
-Please write your answer in full sentences.
+Distributive and Procedural justice
 
 
 ~~~
@@ -356,7 +358,9 @@ Please write your answer in full sentences.
 Discuss what type of group fairness metrics is appropriate for this problem.
 
 ~~~
-Please write your answer in full sentences.
+False positive rate parity: We want to look at some sort of predictive parity metric because we are comparing predicted output to actual results. The big issue here is whether the output predicts that someone will recidivate when they won't disporportionately for different races: So we look at false positives.
+
+
 
 
 ~~~
@@ -365,7 +369,14 @@ Using the appropriate fairness metrics, show if there are concerns in the predic
 
 ```{r}
 #
-#
+compas_recid<- compas_df |> mutate(pred_recid=ifelse(score_text=="Low",0,1))
+res_fpr <- fpr_parity(data         = compas_recid, 
+                         outcome      = 'two_year_recid', 
+                         outcome_base = 0, 
+                         group        = 'race',
+                         preds        = 'pred_recid', 
+                         base         = 'Caucasian')
+res_fpr$Metric
 ```
 
 ~~~
@@ -523,13 +534,12 @@ In the returned named vector, the reference group will be assigned 1, while all 
 
 
 ```{r}
-res_fpr <- fpr_parity(data         = germancredit, 
-                         outcome      = 'BAD', 
-                         outcome_base = 'BAD', 
-                         group        = 'Age_cat',
-                         probs        = 'probability', 
-                         cutoff       = 0.5, 
-                         base         = '(0,25]')
+res_fpr <- fpr_parity(data         = compas_recid, 
+                         outcome      = 'two_year_recid', 
+                         outcome_base = 0, 
+                         group        = 'race',
+                         preds        = 'probability', 
+                         base         = 'Caucasian')
 res_fpr$Metric
 ```
 #### Equalized odds (Equal Opportunity, Positive Rate Parity or Separation)
